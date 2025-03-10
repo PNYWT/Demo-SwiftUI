@@ -12,6 +12,14 @@ struct AppetizerTabView: View {
     @StateObject var tabbarItemsViewModel = TabbarItemsViewModel()
     
     var body: some View {
+        TabView {
+            ForEach(tabbarItemsViewModel.itemsTabbar, id: \.self) { tab in
+                tabbarItemsViewModel.view(for: tab)
+                    .tabItem { Label(tab.title, systemImage: tab.iconName) }
+            }
+        }
+
+       /*
         ZStack(alignment: .bottom) {
             TabView(selection: $tabbarItemsViewModel.selectedTab) {
                 ForEach(tabbarItemsViewModel.itemsTabbar, id: \.self) { tab in
@@ -19,8 +27,9 @@ struct AppetizerTabView: View {
                         .tag(tab)
                 }
             }
+            customTabBar
         }
-        customTabBar
+        */
     }
     
     var customTabBar: some View {

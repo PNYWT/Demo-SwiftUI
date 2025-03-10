@@ -14,13 +14,14 @@ final class AppetizerListViewModel: ObservableObject {
     @Published var alertItemNetwork: AlertItemNetwork?
     @Published var isLoading: Bool = false
     
-    private var cancellables = Set<AnyCancellable>()
+    private var getAppetizersCancellable: AnyCancellable?
     
     func getAppetizers() {
         isLoading = true
-        NetworkManager.shared.getAppetizers(endPoint: .appetizers)
+        getAppetizersCancellable?.cancel()
+        getAppetizersCancellable = NetworkManager.shared.getAppetizers(endPoint: .appetizers)
             .delay(for: .seconds(5), scheduler: DispatchQueue.main)
-//            .receive(on: DispatchQueue.main)
+        //            .receive(on: DispatchQueue.main)
             .sink(receiveCompletion: { completion in
                 self.isLoading = false
                 switch completion {
@@ -37,12 +38,11 @@ final class AppetizerListViewModel: ObservableObject {
                     }
                     print("error -> \(error.localizedDescription)")
                 case .finished:
-                    break
+                    print("✅ API Call Finished")
                 }
             }, receiveValue: { appetizers in
                 print("appetizers -> \(appetizers)")
                 self.appetizers = appetizers
             })
-            .store(in: &cancellables)
     }
 }
