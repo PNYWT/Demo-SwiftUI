@@ -9,13 +9,16 @@ import SwiftUI
 
 @main
 struct SwiftUIFundamentalsApp: App {
+    
+    var orderViewModel = OrderViewModel()
+    
     var body: some Scene {
         WindowGroup {
 //            WeatherContentView()
 //            AppleFrameWorkGridView()
 //            AppleFrameWorkListView()
 //            BarcodeScannerView()
-            AppetizerTabView()
+            AppetizerTabView().environmentObject(orderViewModel)
         }
     }
 }

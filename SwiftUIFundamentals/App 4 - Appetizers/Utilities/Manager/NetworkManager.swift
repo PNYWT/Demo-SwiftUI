@@ -31,7 +31,7 @@ final class NetworkManager {
         
     }
     
-    func getAppetizers(endPoint: EndPoint) -> AnyPublisher<[Appetizer], NetworkError> {
+    func getAppetizers(endPoint: EndPoint) -> AnyPublisher<[AppetizerModel], NetworkError> {
         
         guard let url = URL(string: "\(baseURL)\(endPoint.rawValue)") else {
             return Fail(error: NetworkError.invalidURL).eraseToAnyPublisher()

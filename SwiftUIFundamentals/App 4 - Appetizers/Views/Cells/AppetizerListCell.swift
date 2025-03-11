@@ -9,7 +9,7 @@ import SwiftUI
 
 struct AppetizerListCell: View {
     
-    let appetizer: Appetizer
+    let appetizer: AppetizerModel
     
     var body: some View {
         HStack {

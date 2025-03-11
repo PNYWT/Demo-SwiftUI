@@ -1,5 +1,5 @@
 //
-//  TabbarItems.swift
+//  TabbarItemsViewModel.swift
 //  SwiftUIFundamentals
 //
 //  Created by CallmeOni on 10/3/2568 BE.

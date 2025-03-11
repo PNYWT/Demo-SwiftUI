@@ -29,7 +29,7 @@ final class ImageLoader: ObservableObject {
     }
 }
 
-struct RemoteImage: View {
+private struct RemoteImage: View {
     
     var image: Image?
     

@@ -10,9 +10,12 @@ import Combine
 
 final class AppetizerListViewModel: ObservableObject {
     
-    @Published var appetizers: [Appetizer] = []
-    @Published var alertItemNetwork: AlertItemNetwork?
+    @Published var appetizers: [AppetizerModel] = []
+    @Published var alertItemNetwork: AlertItemAppertizer?
     @Published var isLoading: Bool = false
+    
+    @Published var isShowingDetail = false
+    @Published var selectedAppetizer: AppetizerModel?
     
     private var getAppetizersCancellable: AnyCancellable?
     
@@ -20,7 +23,7 @@ final class AppetizerListViewModel: ObservableObject {
         isLoading = true
         getAppetizersCancellable?.cancel()
         getAppetizersCancellable = NetworkManager.shared.getAppetizers(endPoint: .appetizers)
-            .delay(for: .seconds(5), scheduler: DispatchQueue.main)
+            .delay(for: .seconds(1), scheduler: DispatchQueue.main)
         //            .receive(on: DispatchQueue.main)
             .sink(receiveCompletion: { completion in
                 self.isLoading = false
@@ -28,13 +31,13 @@ final class AppetizerListViewModel: ObservableObject {
                 case .failure(let error):
                     switch error {
                     case .invalidURL:
-                        self.alertItemNetwork = AlertContextNetwork.invalidURL
+                        self.alertItemNetwork = AlertContextAppertizer.invalidURL
                     case .invalidResponse:
-                        self.alertItemNetwork = AlertContextNetwork.invalidResponse
+                        self.alertItemNetwork = AlertContextAppertizer.invalidResponse
                     case .invalidData:
-                        self.alertItemNetwork = AlertContextNetwork.invalidData
+                        self.alertItemNetwork = AlertContextAppertizer.invalidData
                     case .unableToComplete:
-                        self.alertItemNetwork = AlertContextNetwork.unableToComplete
+                        self.alertItemNetwork = AlertContextAppertizer.unableToComplete
                     }
                     print("error -> \(error.localizedDescription)")
                 case .finished:

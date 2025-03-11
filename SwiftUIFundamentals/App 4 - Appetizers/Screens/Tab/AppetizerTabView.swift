@@ -15,9 +15,12 @@ struct AppetizerTabView: View {
         TabView {
             ForEach(tabbarItemsViewModel.itemsTabbar, id: \.self) { tab in
                 tabbarItemsViewModel.view(for: tab)
-                    .tabItem { Label(tab.title, systemImage: tab.iconName) }
+                    .tabItem {
+                        Label(tab.title, systemImage: tab.iconName)
+                    }
             }
         }
+        .accentColor(.darkGreen)
 
        /*
         ZStack(alignment: .bottom) {
