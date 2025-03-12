@@ -12,26 +12,51 @@ struct AppleFrameWorkListView: View {
     @StateObject var viewModel = AppleFrameWorkGridViewModel()
     
     var body: some View {
-        NavigationStack {
-            List {
-                ForEach(MockData.frameworks) { modelFrameWork in
-                    NavigationLink(value: modelFrameWork) {
-                        HFrameworkTitleView(frameworkModel: modelFrameWork)
-                    }
+        
+        List {
+            ForEach(MockData.frameworks) { modelFrameWork in
+                NavigationLink {
+                    FrameworkDetailView(
+                        frameworkDetailViewModel: FrameworkDetailViewModel(
+                            frameworkModel: viewModel.selectedFramework ?? MockData.sampleFramework,
+                            isShowingDetailView: $viewModel.isShowingDetailView),
+                        isVStack: false)
+                } label: {
+                    HFrameworkTitleView(frameworkModel: modelFrameWork)
                 }
             }
-            .navigationTitle("🍎 Frameworks")
-            .navigationDestination(for: FrameworkModel.self) { frameworkModel in
-                FrameworkDetailView(
-                    frameworkDetailViewModel: FrameworkDetailViewModel(
-                        frameworkModel: viewModel.selectedFramework ?? MockData.sampleFramework,
-                        isShowingDetailView: $viewModel.isShowingDetailView),
-                    isVStack: false)
-            }
         }
-        .accentColor(Color(.label))
+        .navigationTitle("🍎 Frameworks")
     }
 }
+
+/*
+ struct AppleFrameWorkListView: View {
+     
+     @StateObject var viewModel = AppleFrameWorkGridViewModel()
+     
+     var body: some View {
+         NavigationStack {
+             List {
+                 ForEach(MockData.frameworks) { modelFrameWork in
+                     NavigationLink(value: modelFrameWork) {
+                         HFrameworkTitleView(frameworkModel: modelFrameWork)
+                     }
+                 }
+             }
+             .navigationTitle("🍎 Frameworks")
+             .navigationDestination(for: FrameworkModel.self) { frameworkModel in
+                 FrameworkDetailView(
+                     frameworkDetailViewModel: FrameworkDetailViewModel(
+                         frameworkModel: viewModel.selectedFramework ?? MockData.sampleFramework,
+                         isShowingDetailView: $viewModel.isShowingDetailView),
+                     isVStack: false)
+             }
+         }
+         .accentColor(Color(.label))
+     }
+ }
+ */
 
 #Preview {
     AppleFrameWorkListView().preferredColorScheme(.dark)

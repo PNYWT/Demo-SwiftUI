@@ -14,11 +14,13 @@ struct SwiftUIFundamentalsApp: App {
     
     var body: some Scene {
         WindowGroup {
+            MainSelectAppView()
+                .environmentObject(orderViewModel)
 //            WeatherContentView()
 //            AppleFrameWorkGridView()
 //            AppleFrameWorkListView()
 //            BarcodeScannerView()
-            AppetizerTabView().environmentObject(orderViewModel)
+//            AppetizerTabView().environmentObject(orderViewModel)
         }
     }
 }
