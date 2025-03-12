@@ -9,10 +9,14 @@ import SwiftUI
 import UIKit
 
 extension UIColor {
-    static let darkGreen = #colorLiteral(red: 0, green: 0.3882352941, blue: 0.2392156863, alpha: 1)
+    static var darkGreen: UIColor {
+        return UIColor { traitCollection in
+            traitCollection.userInterfaceStyle == .dark ?
+                .red : #colorLiteral(red: 0, green: 0.388, blue: 0.239, alpha: 1) 
+        }
+    }
 }
 
 extension Color {
     static let darkGreen = Color(uiColor: .darkGreen)
 }
-

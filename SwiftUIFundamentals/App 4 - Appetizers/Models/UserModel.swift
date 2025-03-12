@@ -18,17 +18,17 @@ struct UserModel: Codable {
     
     func saveUser(_ user: UserModel) -> Data? {
         let encoder = JSONEncoder()
-        if let encoded = try? encoder.encode(user) {
-            UserDefaults.standard.set(encoded, forKey: "userModel")
-            return encoded
+        guard let encoded = try? encoder.encode(user) else {
+            return nil
         }
-        return nil
+        UserDefaults.standard.set(encoded, forKey: "userModel")
+        return encoded
     }
     
     func loadUser(data: Data) -> UserModel? {
-        if let userModel = try? JSONDecoder().decode(UserModel.self, from: data) {
-            return userModel
+        guard let userModel = try? JSONDecoder().decode(UserModel.self, from: data) else {
+            return nil
         }
-        return nil
+        return userModel
     }
 }

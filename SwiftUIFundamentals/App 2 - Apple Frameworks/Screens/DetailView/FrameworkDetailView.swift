@@ -9,40 +9,59 @@ import SwiftUI
 
 struct FrameworkDetailView: View {
     
-    var frameworkModel: FrameworkModel
-    var isVStack: Bool = true
-    @Binding var isShowingDetailView: Bool
-    @State private var isShowingSafariView: Bool = false
+    @ObservedObject var frameworkDetailViewModel: FrameworkDetailViewModel
+    private var isVStack: Bool = true
+    
+    init(frameworkDetailViewModel: FrameworkDetailViewModel, isVStack: Bool) {
+        self.frameworkDetailViewModel = frameworkDetailViewModel
+        self.isVStack = isVStack
+    }
     
     var body: some View {
         VStack {
             if isVStack {
-                PrimaryXButtonView(isShowingDetailView: $isShowingDetailView)
+                PrimaryXButtonView(isShowingDetailView: $frameworkDetailViewModel.isShowingDetailView.wrappedValue)
             }
             
             Spacer()
             
-            VFrameworkTitleView(frameworkModel: frameworkModel)
+            VFrameworkTitleView(frameworkModel: frameworkDetailViewModel.frameworkModel)
             
-            Text(frameworkModel.description)
+            Text(frameworkDetailViewModel.frameworkModel.description)
                 .font(.body)
                 .padding(.horizontal, 16)
             
             Spacer()
             
-            Button {
-                isShowingSafariView = true
-            } label: {
-                PrimaryButtonView(imageSystemName: "book", titleButton: "Learn More")
-            }
+            HStack(spacing: 16) {
+                Link(destination: URL(string: "https://www.google.co.th/search?q=\(frameworkDetailViewModel.frameworkModel.name)")!) {
+                    PrimaryButtonView(
+                        imageSystemName: "magnifyingglass",
+                        titleButton: "Search More",
+                        backgroundColor: .blue)
+                }
 
+                Button {
+                    frameworkDetailViewModel.isShowingSafariView = true
+                } label: {
+                    PrimaryButtonView(
+                        imageSystemName: "book",
+                        titleButton: "Read Docs")
+                }
+            }
+            .frame(maxWidth: .infinity)
+            .padding()
         }
-        .fullScreenCover(isPresented: $isShowingSafariView) {
-            SafariView(url: URL(string: frameworkModel.urlString) ?? URL(string: "www.apple.com")!)
+        .fullScreenCover(isPresented: $frameworkDetailViewModel.isShowingSafariView) {
+            SafariView(url: URL(string: frameworkDetailViewModel.frameworkModel.urlString) ?? URL(string: "www.apple.com")!)
         }
     }
 }
 
 #Preview {
-    FrameworkDetailView(frameworkModel: MockData.sampleFramework, isShowingDetailView: .constant(false)).preferredColorScheme(.dark)
+    FrameworkDetailView(
+        frameworkDetailViewModel: FrameworkDetailViewModel(
+         frameworkModel: MockData.sampleFramework,
+         isShowingDetailView: .constant(false)), isVStack: true)
+        .preferredColorScheme(.dark)
 }

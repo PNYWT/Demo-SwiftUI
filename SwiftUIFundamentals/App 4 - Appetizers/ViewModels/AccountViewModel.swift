@@ -29,11 +29,11 @@ final class AccountViewModel: ObservableObject {
     
     func retrieveUser() {
         guard let userData = userData else { return }
-        if let haveUserModel = userModel.loadUser(data: userData) {
-            userModel = haveUserModel
-        } else {
+        guard let haveUserModel = userModel.loadUser(data: userData) else {
             alertItem = AlertContextAppertizer.invalidUserData
+            return
         }
+        userModel = haveUserModel
     }
     
     var isValidForm: Bool {

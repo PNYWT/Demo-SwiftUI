@@ -30,7 +30,10 @@ struct LoadingView: View {
             Color(.systemBackground)
                 .ignoresSafeArea(edges: .all)
             
-            ActivityIndicatorView()
+//            ActivityIndicatorView()
+            ProgressView()
+                .progressViewStyle(CircularProgressViewStyle(tint: .darkGreen))
+                .scaleEffect(2)
         }
     }
 }

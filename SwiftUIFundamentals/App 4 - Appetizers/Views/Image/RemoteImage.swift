@@ -50,3 +50,31 @@ struct AppetizerRemoteImage: View {
             }
     }
 }
+
+struct AsyncImageView: View {
+    
+    let urlString: String
+    
+    var body: some View {
+        if let cachedImage = NetworkManager.shared.loadCachedImage(url: urlString) {
+            Image(uiImage: cachedImage)
+                .resizable()
+        } else {
+            AsyncImage(url: URL(string: urlString), transaction: Transaction(animation: .easeInOut)) { phase in
+                switch phase {
+                case .empty:
+                    LoadingView()
+                case .success(let image):
+                    image
+                        .resizable()
+                        .onAppear {
+                            NetworkManager.shared.cacheImage(image, for: urlString)
+                        }
+                default:
+                    Image(.foodPlaceholder)
+                        .resizable()
+                }
+            }
+        }
+    }
+}

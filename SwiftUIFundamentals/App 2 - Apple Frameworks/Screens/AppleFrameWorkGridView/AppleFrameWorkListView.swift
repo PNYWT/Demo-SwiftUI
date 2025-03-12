@@ -23,9 +23,10 @@ struct AppleFrameWorkListView: View {
             .navigationTitle("🍎 Frameworks")
             .navigationDestination(for: FrameworkModel.self) { frameworkModel in
                 FrameworkDetailView(
-                    frameworkModel: frameworkModel,
-                    isVStack: false,
-                    isShowingDetailView: .constant(false))
+                    frameworkDetailViewModel: FrameworkDetailViewModel(
+                        frameworkModel: viewModel.selectedFramework ?? MockData.sampleFramework,
+                        isShowingDetailView: $viewModel.isShowingDetailView),
+                    isVStack: false)
             }
         }
         .accentColor(Color(.label))

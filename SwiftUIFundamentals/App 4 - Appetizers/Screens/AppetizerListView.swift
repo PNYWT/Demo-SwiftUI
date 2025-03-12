@@ -17,17 +17,19 @@ struct AppetizerListView: View {
             NavigationView {
                 List(appetizerListViewModel.appetizers) { item in
                     AppetizerListCell(appetizer: item)
+                        .listRowSeparator(.hidden)
+//                        .listRowSeparatorTint(.darkGreen)
                         .onTapGesture {
                             appetizerListViewModel.isShowingDetail = true
                             appetizerListViewModel.selectedAppetizer = item
                         }
                 }
-                .listStyle(.plain)
                 .navigationTitle(Text("🍎 Appertizer"))
+                .listStyle(.plain)
                 .disabled(appetizerListViewModel.isShowingDetail)
             }
-            .onAppear {
-                appetizerListViewModel.getAppetizers()
+            .task {
+                await appetizerListViewModel.getAppetizers()
             }
             .blur(radius: appetizerListViewModel.isShowingDetail ? 20 : 0.0)
             

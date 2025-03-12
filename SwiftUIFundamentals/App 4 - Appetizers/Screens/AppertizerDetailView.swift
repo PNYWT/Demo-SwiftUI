@@ -33,9 +33,9 @@ struct AppertizerDetailView: View {
                 HStack(spacing: 40) {
                     NutritionInfoView(title: "Calories", value: appertizer.calories.codingKey.stringValue)
                     
-                    NutritionInfoView(title: "Carbs", value: appertizer.carbs.codingKey.stringValue)
+                    NutritionInfoView(title: "Carbs", value: appertizer.carbs.codingKey.stringValue + " g")
                     
-                    NutritionInfoView(title: "Protein", value: appertizer.protein.codingKey.stringValue)
+                    NutritionInfoView(title: "Protein", value: appertizer.protein.codingKey.stringValue + " g")
                 }
             }
             
@@ -46,8 +46,14 @@ struct AppertizerDetailView: View {
                 orderViewModel.addItem(appertizer)
                 isShowingDetail = false
             } label: {
-                PrimaryCartButton(price: appertizer.price, title: "Add to Order")
+//                PrimaryCartButton(price: appertizer.price, title: "Add to Order")
+                Text("$\(appertizer.price, specifier: "%.2f") - Add to Order")
             }
+            .modifier(StandardButtonStyle())
+//            .standardButtonStyle()
+//            .buttonStyle(.bordered)
+//            .tint(.darkGreen)
+//            .controlSize(.large)
             .padding(.bottom, 30)
         }
         .frame(width: 300, height: 525)
