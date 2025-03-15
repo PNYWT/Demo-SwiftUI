@@ -42,6 +42,7 @@ struct AccountView: View {
                     
 //                    DatePicker("Birthday", selection: $accountViewModel.userModel.birthday, displayedComponents: .date)
                     DatePicker("Birthday", selection: $accountViewModel.userModel.birthday, in: Date().oneHundredTenYearsAgo...Date().eighteenYearsAgo, displayedComponents: .date)
+                        .datePickerStyle(.graphical)
                     
                     Button {
                         print("save")
