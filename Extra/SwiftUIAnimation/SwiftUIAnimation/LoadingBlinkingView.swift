@@ -1,20 +1,20 @@
 //
-//  BlinkingView.swift
-//  Jaei
+//  LoadingBlinkingView.swift
+//  SwiftUIAnimation
 //
-//  Created by Dev2 on 31/3/2568 BE.
+//  Created by CallmeOni on 31/3/2568 BE.
 //
 
 import SwiftUI
 
-struct BlinkingView: View {
+struct LoadingBlinkingView: View {
     @State var isAnimating: Bool = false
     let count: Int
     let size: CGFloat
 
     var body: some View {
         GeometryReader { geometry in
-            ForEach(0..<count, id: .\self) { index in
+            ForEach(0..<count, id: \.self) { index in
                 item(forIndex: index, in: geometry.size)
                     .frame(width: geometry.size.width, height: geometry.size.height)
             }
@@ -44,5 +44,5 @@ struct BlinkingView: View {
 }
 
 #Preview {
-    BlinkingView(count: 8, size: 16)
+    LoadingBlinkingView(count: 8, size: 16)
 }
