@@ -9,43 +9,28 @@ import SwiftUI
 
 struct NumberPadPinView: View {
     
-    @State private var pin: String = ""
-    private var lockPin: String
-    private var forgotPin: () -> Void
+    @ObservedObject private var lockViewModel: LockViewModel
+    private var forgotPin: (() -> Void)?
     
-    @State private var animateField: Bool = false
-    @Binding private var isUnlocked: Bool
-    @Binding private var noBiometricAccess: Bool
-    private var lockType: LockType
-    private var isBiometricAvailable: Bool
-    
-    init(lockType: LockType,
-         lockPin: String,
-         isBiometricAvailable: Bool,
-         isUnlocked: Binding<Bool>,
-         noBiometricAccess: Binding<Bool>,
-         forgotPin: @escaping () -> Void) {
-        self.lockPin = lockPin
-        self.lockType = lockType
-        self.isBiometricAvailable = isBiometricAvailable
-        self._noBiometricAccess = noBiometricAccess
-        self._isUnlocked = isUnlocked
+    init(lockViewModel: LockViewModel,
+         confirmPin: Bool = false,
+         forgotPin: (() -> Void)? = nil) {
+        self.lockViewModel = lockViewModel
         self.forgotPin = forgotPin
     }
-    
+
     var body: some View {
         Rectangle()
             .fill(.black)
             .ignoresSafeArea()
         VStack(spacing: 16) {
-            Text("Enter Pin")
+            Text(lockViewModel.isConfirmPin ? "Confirm Pin" : "Enter Pin")
                 .font(.title.bold())
                 .frame(maxWidth: .infinity)
                 .overlay(alignment: .leading) {
-                    if lockType == .both && isBiometricAvailable {
+                    if lockViewModel.conditionShowBackButton() {
                         Button {
-                            pin.removeAll()
-                            noBiometricAccess = false
+                            lockViewModel.checkActionback()
                         } label: {
                             Image(systemName: "arrow.left")
                                 .font(.title3)
@@ -64,8 +49,8 @@ struct NumberPadPinView: View {
                         
                         if (1...9).contains(number) {
                             Button {
-                                if pin.count < 4 {
-                                    pin.append("\(number)")
+                                if lockViewModel.pinInput.count < 4 {
+                                    lockViewModel.pinInput.append("\(number)")
                                 }
                             } label: {
                                 Text("\(number)")
@@ -80,8 +65,8 @@ struct NumberPadPinView: View {
                                 .fill(Color.clear)
                         } else if number == 11 {
                             Button {
-                                if pin.count < 4 {
-                                    pin.append("\(0)")
+                                if lockViewModel.pinInput.count < 4 {
+                                    lockViewModel.pinInput.append("\(0)")
                                 }
                             } label: {
                                 Text("0")
@@ -93,8 +78,8 @@ struct NumberPadPinView: View {
                             .tint(.white)
                         } else {
                             Button {
-                                if !pin.isEmpty {
-                                    pin.removeLast()
+                                if !lockViewModel.pinInput.isEmpty {
+                                    lockViewModel.pinInput.removeLast()
                                 }
                             } label: {
                                 Image(systemName: "delete.backward")
@@ -108,30 +93,14 @@ struct NumberPadPinView: View {
                     }
                 }
             }
-            .onChange(of: pin) { oldValue, newValue in
-                if newValue.count == 4 {
-                    if lockPin == pin {
-                        print("Unlock")
-                        withAnimation(.snappy, completionCriteria: .logicallyComplete) {
-                            isUnlocked = true
-                        } completion: {
-                            pin.removeAll()
-                            noBiometricAccess = !isBiometricAvailable
-                        }
-                    } else {
-                        print("Wrong Pin")
-                        withAnimation(.easeOut(duration: 0.5)) {
-                            animateField.toggle()
-                            pin.removeAll()
-                        }
-                    }
-                }
+            .onChange(of: lockViewModel.pinInput) { oldValue, newValue in
+                lockViewModel.handlePinInput(newValue: newValue)
             }
         }
         .padding()
         .environment(\.colorScheme, .dark)
         .onAppear {
-            pin.removeAll()
+            lockViewModel.pinInput.removeAll()
         }
     }
     
@@ -143,9 +112,9 @@ struct NumberPadPinView: View {
                         RoundedRectangle(cornerRadius: 16)
                             .frame(width: 50, height: 55)
                             .overlay {
-                                if pin.count > index {
-                                    let index = pin.index(pin.startIndex, offsetBy: index)
-                                    let starting = String(pin[index])
+                                if lockViewModel.pinInput.count > index {
+                                    let index = lockViewModel.pinInput.index(lockViewModel.pinInput.startIndex, offsetBy: index)
+                                    let starting = String(lockViewModel.pinInput[index])
                                     
                                     Text(starting)
                                         .font(.title.bold())
@@ -154,7 +123,7 @@ struct NumberPadPinView: View {
                             }
                     }
                 }
-                .keyframeAnimator(initialValue: CGFloat.zero, trigger: animateField) { content, value in
+                .keyframeAnimator(initialValue: CGFloat.zero, trigger: lockViewModel.animateField) { content, value in
                     content
                         .offset(x: value)
                 } keyframes: { _ in
@@ -167,12 +136,14 @@ struct NumberPadPinView: View {
                     }
                 }
 
-                Button {
-                    forgotPin()
-                } label: {
-                    Text("Forgot Pin")
-                        .font(.callout)
-                        .foregroundStyle(.white)
+                if !lockViewModel.lockPin.isEmpty {
+                    Button {
+                        forgotPin?()
+                    } label: {
+                        Text("Forgot Pin")
+                            .font(.callout)
+                            .foregroundStyle(.white)
+                    }
                 }
             }
             .padding(.top, 16)

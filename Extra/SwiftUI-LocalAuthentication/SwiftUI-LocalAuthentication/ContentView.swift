@@ -8,15 +8,33 @@
 import SwiftUI
 
 struct ContentView: View {
+    
+    @ObservedObject private var lockViewModel: LockViewModel = LockViewModel(lockType: .number, isEnabled: true)
+    
+    init() {
+        lockViewModel.lockPin = ""
+    }
+    
     var body: some View {
-        LockView(lockType: .biometric, lockPin: "0000", isEnabled: true) {
-            VStack {
-                Image(systemName: "globe")
-                    .imageScale(.large)
-                
-                Text("Hello")
+        ZStack {
+            Group {
+                switch lockViewModel.isUnlocked {
+                case true:
+                    LockView(lockViewModel: lockViewModel) {
+                        VStack {
+                            Image(systemName: "globe")
+                                .imageScale(.large)
+                            Text("Hello")
+                        }
+                    }
+                case false:
+                    NumberPadPinView(lockViewModel: lockViewModel)
+                        .transition(.move(
+                            edge: lockViewModel.isConfirmPin ? .trailing : .leading))
+                }
             }
         }
+        .animation(.easeInOut, value: lockViewModel.isConfirmPin)
     }
 }
 
